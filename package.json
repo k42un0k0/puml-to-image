@@ -1,0 +1,25 @@
+{
+  "name": "puml-to-image",
+  "version": "0.1.0",
+  "description": "create png file from *.pu and *.puml",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k42un0k0/puml-to-image.git"
+  },
+  "author": "k42un0k0",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/k42un0k0/puml-to-image/issues"
+  },
+  "homepage": "https://github.com/k42un0k0/puml-to-image#readme",
+  "devDependencies": {
+    "@types/jest": "^26.0.20",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.0",
+    "typescript": "^4.1.3"
+  }
+}
