@@ -1,9 +1,14 @@
 {
-  "name": "puml-to-image",
+  "name": "@k42un0k0/puml-to-image",
   "version": "0.1.0",
   "description": "create png file from *.pu and *.puml",
   "main": "index.js",
   "scripts": {
+    "start":"node ./dist/cli.js",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf dist/",
+    "cp:jar": "cpx src/bin/* dist/bin/",
+    "prepare": "npm run clean && npm run build && npm run cp:jar",
     "test": "jest"
   },
   "repository": {
@@ -15,11 +20,16 @@
   "bugs": {
     "url": "https://github.com/k42un0k0/puml-to-image/issues"
   },
+  "bin": {
+    "puml-to-image": "./dist/cli.js"
+  },
   "homepage": "https://github.com/k42un0k0/puml-to-image#readme",
   "devDependencies": {
     "@types/glob": "^7.1.3",
     "@types/jest": "^26.0.20",
+    "cpx": "^1.5.0",
     "jest": "^26.6.3",
+    "rimraf": "^3.0.2",
     "ts-jest": "^26.5.0",
     "typescript": "^4.1.3"
   }
