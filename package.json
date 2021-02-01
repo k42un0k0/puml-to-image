@@ -8,7 +8,7 @@
     "build": "tsc -p tsconfig.build.json",
     "clean": "rimraf dist/",
     "cp:jar": "cpx src/bin/* dist/bin/",
-    "prepare": "npm run clean && npm run build && npm run cp:jar",
+    "prepublishOnly": "npm run clean && npm run build && npm run cp:jar",
     "test": "jest"
   },
   "repository": {
