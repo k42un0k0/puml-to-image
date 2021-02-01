@@ -9,7 +9,6 @@
     "clean": "rimraf dist/",
     "cp:jar": "cpx src/bin/* dist/bin/",
     "prepublishOnly": "npm run clean && npm run build && npm run cp:jar",
-    "prepare": "yarn install",
     "test": "jest"
   },
   "repository": {
