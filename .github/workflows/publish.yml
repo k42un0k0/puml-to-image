@@ -4,19 +4,19 @@
 name: Node.js CI
 
 on:
-  push:
-    branches: [master]
+  release:
+    types: [created]
 
 jobs:
-  test:
+  publish-gpr:
+    needs: test
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 14
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v1
         with:
-          node-version: "14"
+          node-version: 14
+          registry-url: https://npm.pkg.github.com/
       # キャッシュ管理
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -31,4 +31,6 @@ jobs:
             ${{ runner.os }}-yarn-
       # /キャッシュ管理
       - run: yarn install
-      - run: yarn test
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
