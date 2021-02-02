@@ -1,3 +1,7 @@
+import glob from "glob";
+import { exec } from "child_process";
+import { mocked } from "ts-jest/utils";
+import { exportDiagrams } from "./exportDiagrams";
 import { IS_WINDOWS } from "./utils";
 
 jest.mock("glob", () => {
@@ -9,35 +13,10 @@ jest.mock("child_process", () => {
   };
 });
 
-function importStatement() {
-  const glob = require("glob");
-  const { exec } = require("child_process");
-  const { mocked } = require("ts-jest/utils");
-  const { exportDiagrams } = require("./exportDiagrams");
-
-  return {
-    glob,
-    exec,
-    mocked,
-    exportDiagrams,
-  };
-}
 describe("exportDiagrams", () => {
-  beforeEach(() => {
-    jest.resetModules();
-  });
   if (!IS_WINDOWS)
     describe("when linux", () => {
-      beforeEach(() => {
-        jest.mock("./utils", () => {
-          return {
-            ...jest.requireActual<{}>("./utils"),
-            IS_WINDOWS: false,
-          };
-        });
-      });
       test("call exec once and glob once", async () => {
-        const { glob, exec, mocked, exportDiagrams } = importStatement();
         mocked(exec).mockImplementation((_: any, cb: any) => {
           return cb(null, "exec called");
         });
@@ -55,8 +34,7 @@ describe("exportDiagrams", () => {
         );
       });
       test("call exec twice and glob once", async () => {
-        const { glob, exec, mocked, exportDiagrams } = importStatement();
-        mocked(exec).mockImplementation((arg: any, cb: any) => {
+        mocked(exec).mockImplementation((_: any, cb: any) => {
           return cb(null, "exec called");
         });
         mocked(glob).mockImplementation((_: any, cb: any) => {
@@ -77,16 +55,7 @@ describe("exportDiagrams", () => {
     });
   if (IS_WINDOWS)
     describe("when windows", () => {
-      beforeEach(() => {
-        jest.mock("./utils", () => {
-          return {
-            ...jest.requireActual<{}>("./utils"),
-            IS_WINDOWS: true,
-          };
-        });
-      });
       test("call exec once and glob once", async () => {
-        const { glob, exec, mocked, exportDiagrams } = importStatement();
         mocked(exec).mockImplementation((_: any, cb: any) => {
           return cb(null, "exec called");
         });
