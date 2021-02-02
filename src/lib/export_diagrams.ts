@@ -9,10 +9,7 @@ const pExec = cbToPromise<string, string>(exec);
 
 const EXECUTE_PROCESS_PATH = "./";
 
-export async function main() {
-    const inputDirName = 'doc';
-    const outputDirName = 'directory_contains_actual_images';
-    const jarFilePath = path.resolve(__dirname, '../bin/plantuml.jar');
+export async function exportDiagrams(inputDirName: string, outputDirName: string, jarFilePath: string) {
 
     console.log(chalk.green('export diagrams'));
 
