@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import path from "path"
 import * as yargs from 'yargs'
-import { exportDiagrams } from "./lib/export_diagrams"
+import { exportDiagrams } from "./lib/exportDiagrams"
 
 const inputDirName = "doc";
 const outputDirName = 'directory_contains_actual_images';
-const jarFilePath = path.resolve(__dirname, '../bin/plantuml.jar')
+const jarFilePath = path.resolve(__dirname, './bin/plantuml.jar')
 
 const argv = yargs
     .scriptName("puml-to-image")
