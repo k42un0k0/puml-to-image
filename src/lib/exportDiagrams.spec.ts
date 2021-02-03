@@ -1,77 +1,113 @@
-import glob from "glob";
-import { exec } from "child_process";
-import { mocked } from "ts-jest/utils";
 import { exportDiagrams } from "./exportDiagrams";
-import { IS_WINDOWS } from "./utils";
+import fs from "fs";
+import rimraf from "rimraf";
+import mkdirp from "mkdirp";
+import path from "path";
+import { readdirRecursively } from "./utils";
 
-jest.mock("glob", () => {
-  return jest.fn();
+const pumlStr = `@startuml
+:sample:
+@enduml`;
+
+const jarFilePath = path.resolve(__dirname, "../bin/plantuml.jar");
+
+beforeEach(() => {
+  rimraf.sync(__dirname + "/bintest");
+  mkdirp.sync(__dirname + "/bintest");
+  process.chdir(__dirname + "/bintest");
 });
-jest.mock("child_process", () => {
-  return {
-    exec: jest.fn(),
-  };
+
+afterAll(() => {
+  rimraf.sync(__dirname + "/bintest");
 });
 
 describe("exportDiagrams", () => {
-  if (!IS_WINDOWS)
-    describe("when linux", () => {
-      test("call exec once and glob once", async () => {
-        mocked(exec).mockImplementation((_: any, cb: any) => {
-          return cb(null, "exec called");
-        });
-        mocked(glob).mockImplementation((_: any, cb: any) => {
-          return cb(null, ["aaa/uuu.pu"]);
-        });
+  test("export diagrams", async () => {
+    mkdirp.sync("from/a/b/c");
+    mkdirp.sync("from/x/y");
 
-        await exportDiagrams("aaa", "eee", "./bin/hello.jar");
+    fs.writeFileSync("from/1.pu", pumlStr);
+    fs.writeFileSync("from/2.pu", pumlStr);
+    fs.writeFileSync("from/a/1.pu", pumlStr);
+    fs.writeFileSync("from/a/2.pu", pumlStr);
+    fs.writeFileSync("from/a/b/1.pu", pumlStr);
+    fs.writeFileSync("from/a/b/2.pu", pumlStr);
+    fs.writeFileSync("from/a/b/c/1.pu", pumlStr);
+    fs.writeFileSync("from/a/b/c/2.pu", pumlStr);
+    fs.writeFileSync("from/x/1.puml", pumlStr);
+    fs.writeFileSync("from/x/2.puml", pumlStr);
+    fs.writeFileSync("from/x/y/1.puml", pumlStr);
+    fs.writeFileSync("from/x/y/2.puml", pumlStr);
+    await exportDiagrams("from", "to", jarFilePath);
+    expect(readdirRecursively("./to")).toEqual([
+      "./to/1.png",
+      "./to/2.png",
+      "./to/a/1.png",
+      "./to/a/2.png",
+      "./to/a/b/1.png",
+      "./to/a/b/2.png",
+      "./to/a/b/c/1.png",
+      "./to/a/b/c/2.png",
+      "./to/x/1.png",
+      "./to/x/2.png",
+      "./to/x/y/1.png",
+      "./to/x/y/2.png",
+    ]);
+  }, 15000);
+  test("export diagrams without invalid extention files", async () => {
+    mkdirp.sync("from/a/b/c");
+    mkdirp.sync("from/x/y");
 
-        expect(mocked(glob).mock.calls.length).toBe(1);
-        expect(mocked(glob).mock.calls[0][0]).toBe("aaa/**/*.{pu,puml}");
-        expect(mocked(exec).mock.calls.length).toBe(1);
-        expect(mocked(exec).mock.calls[0][0]).toBe(
-          "java -Dfile.encoding=UTF-8 -jar ./bin/hello.jar aaa/uuu.pu -o ../eee"
-        );
-      });
-      test("call exec twice and glob once", async () => {
-        mocked(exec).mockImplementation((_: any, cb: any) => {
-          return cb(null, "exec called");
-        });
-        mocked(glob).mockImplementation((_: any, cb: any) => {
-          return cb(null, ["bbb/uuu.pu", "bbb/ttt.puml"]);
-        });
-        await exportDiagrams("bbb", "eee", "./hello.jar");
+    fs.writeFileSync("from/1.txt", pumlStr);
+    fs.writeFileSync("from/2.pu", pumlStr);
+    fs.writeFileSync("from/a/1.md", pumlStr);
+    fs.writeFileSync("from/a/2.pu", pumlStr);
+    fs.writeFileSync("from/a/b/1.js", pumlStr);
+    fs.writeFileSync("from/a/b/2.pu", pumlStr);
+    fs.writeFileSync("from/a/b/c/1.ts", pumlStr);
+    fs.writeFileSync("from/a/b/c/2.pu", pumlStr);
+    fs.writeFileSync("from/x/1.d.ts", pumlStr);
+    fs.writeFileSync("from/x/2.puml", pumlStr);
+    fs.writeFileSync("from/x/y/1.coffee", pumlStr);
+    fs.writeFileSync("from/x/y/2.puml", pumlStr);
+    await exportDiagrams("from", "to", jarFilePath);
+    expect(readdirRecursively("./to")).toEqual([
+      "./to/2.png",
+      "./to/a/2.png",
+      "./to/a/b/2.png",
+      "./to/a/b/c/2.png",
+      "./to/x/2.png",
+      "./to/x/y/2.png",
+    ]);
+  });
+  test("noop with empty inputDir", async () => {
+    mkdirp.sync("from");
+    await exportDiagrams("from", "to", jarFilePath);
+    expect(fs.statSync.bind(fs, "./to")).toThrow();
+  });
+  test("noop when not existing inputDir", async () => {
+    expect(fs.statSync.bind(fs, "./hoge")).toThrow();
+    await expect(exportDiagrams("hoge", "to", jarFilePath));
+    expect(readdirRecursively(".")).toEqual([]);
+  });
+  test("reject with invalid puml", () => {
+    mkdirp.sync("from");
 
-        expect(mocked(glob).mock.calls.length).toBe(1);
-        expect(mocked(glob).mock.calls[0][0]).toBe("bbb/**/*.{pu,puml}");
-        expect(mocked(exec).mock.calls.length).toBe(2);
-        expect(mocked(exec).mock.calls[0][0]).toBe(
-          "java -Dfile.encoding=UTF-8 -jar ./hello.jar bbb/uuu.pu -o ../eee"
-        );
-        expect(mocked(exec).mock.calls[1][0]).toBe(
-          "java -Dfile.encoding=UTF-8 -jar ./hello.jar bbb/ttt.puml -o ../eee"
-        );
-      });
-    });
-  if (IS_WINDOWS)
-    describe("when windows", () => {
-      test("call exec once and glob once", async () => {
-        mocked(exec).mockImplementation((_: any, cb: any) => {
-          return cb(null, "exec called");
-        });
-        mocked(glob).mockImplementation((_: any, cb: any) => {
-          return cb(null, ["aaa\\uuu.pu"]);
-        });
+    fs.writeFileSync("from/1.pu", pumlStr);
+    fs.writeFileSync(
+      "from/2.pu",
+      `@startuml
+:invalid actor
+@enduml`
+    );
+    return expect(exportDiagrams("from", "to", jarFilePath)).rejects.toThrow();
+  });
+  test("reject when not existing jar file", () => {
+    mkdirp.sync("from");
 
-        await exportDiagrams("aaa", "eee", "./bin/hello.jar");
-
-        expect(mocked(glob).mock.calls.length).toBe(1);
-        expect(mocked(glob).mock.calls[0][0]).toBe("aaa/**/*.{pu,puml}");
-        expect(mocked(exec).mock.calls.length).toBe(1);
-
-        expect(mocked(exec).mock.calls[0][0]).toBe(
-          "chcp 65001 & java -Dfile.encoding=UTF-8 -jar ./bin/hello.jar aaa\\uuu.pu -o ..\\eee"
-        );
-      });
-    });
+    fs.writeFileSync("from/1.pu", pumlStr);
+    fs.writeFileSync("from/2.pu", pumlStr);
+    expect(fs.statSync.bind(fs, "./foo.bar")).toThrow();
+    return expect(exportDiagrams("from", "to", "./foo.bar")).rejects.toThrow();
+  });
 });

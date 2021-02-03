@@ -1,24 +1,44 @@
-import { cbToPromise, Callback } from "./utils"
+import { readdirRecursively } from "./utils";
+import fs from "fs";
+import rimraf from "rimraf";
+import mkdirp from "mkdirp";
 
-describe("cbToPromise", () => {
-    test("callback to promise with resolve", () => {
-        function someCallback(arg: string, cb: Callback<string>) {
-            cb(undefined, arg);
-        }
-        const promisedFn = cbToPromise(someCallback)
+beforeEach(() => {
+  rimraf.sync(__dirname + "/bintest");
+  mkdirp.sync(__dirname + "/bintest");
+  process.chdir(__dirname + "/bintest");
+});
 
-        const actual = "hello"
-        return promisedFn(actual).then((res) => {
-            expect(res).toBe(actual)
-        })
-    })
+afterAll(() => {
+  rimraf.sync(__dirname + "/bintest");
+});
 
-    test("callback to promise with reject", () => {
-        function someCallback(_: unknown, cb: Callback) {
-            cb(Error("faild by some error"), undefined);
-        }
-        const promisedFn = cbToPromise(someCallback)
+describe("readdirRecursively", () => {
+  test("export diagrams", async () => {
+    mkdirp.sync("a/b/c");
+    mkdirp.sync("x/y");
 
-        return expect(promisedFn("hello")).rejects.toThrow("faild by some error")
-    })
-})
+    fs.writeFileSync("a/1.txt", "\n");
+    fs.writeFileSync("a/2.txt", "\n");
+    fs.writeFileSync("a/b/1.txt", "\n");
+    fs.writeFileSync("a/b/2.txt", "\n");
+    fs.writeFileSync("a/b/c/1.txt", "\n");
+    fs.writeFileSync("a/b/c/2.txt", "\n");
+    fs.writeFileSync("x/1.txt", "\n");
+    fs.writeFileSync("x/2.txt", "\n");
+    fs.writeFileSync("x/y/1.txt", "\n");
+    fs.writeFileSync("x/y/2.txt", "\n");
+    expect(readdirRecursively(".")).toEqual([
+      "./a/1.txt",
+      "./a/2.txt",
+      "./a/b/1.txt",
+      "./a/b/2.txt",
+      "./a/b/c/1.txt",
+      "./a/b/c/2.txt",
+      "./x/1.txt",
+      "./x/2.txt",
+      "./x/y/1.txt",
+      "./x/y/2.txt",
+    ]);
+  });
+});

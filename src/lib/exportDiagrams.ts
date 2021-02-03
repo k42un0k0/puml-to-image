@@ -1,11 +1,12 @@
 import chalk from "chalk";
 import glob from "glob";
 import { exec } from "child_process";
-import { cbToPromise, IS_WINDOWS } from "./utils";
+import { IS_WINDOWS } from "./utils";
 import path from "path";
+import util from "util";
 
-const pGlob = cbToPromise<string, string[]>(glob);
-const pExec = cbToPromise<string, string>(exec);
+const pGlob = util.promisify(glob);
+const pExec = util.promisify(exec);
 
 const EXECUTE_PROCESS_PATH = "./";
 
@@ -21,7 +22,7 @@ export async function exportDiagrams(
     // inputDirNameから*.puを検索
     files = await findAllPuml(inputDirName);
   } catch (error) {
-    exitWithShowError(1, error);
+    throw error;
   }
 
   // すべての.pu を全て画像化
@@ -32,15 +33,10 @@ export async function exportDiagrams(
   try {
     await Promise.all(promises);
   } catch (error) {
-    exitWithShowError(2, error);
+    throw error;
   }
   console.log(chalk.green("Done!!"));
-  return IS_WINDOWS;
-}
-
-function exitWithShowError(code: number, err: Error) {
-  console.log(chalk.red(err));
-  process.exit(code);
+  return;
 }
 
 function findAllPuml(rootDir: string) {
@@ -70,6 +66,7 @@ function pumlToImage(
     }
     const outputPath = generateOutputPath();
     console.log(`from ${file}`);
+
     let javaCommand = `java -Dfile.encoding=UTF-8 -jar ${jarFilePath} ${file} -o ${outputPath}`;
     // windowsの場合、出力をutf-8に変換
     if (IS_WINDOWS) {
