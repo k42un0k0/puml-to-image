@@ -67,7 +67,7 @@ describe("exportDiagrams", () => {
       "./to/x/y/1.png",
       "./to/x/y/2.png",
     ]);
-  }, 15 * 1000);
+  }, 60 * 1000);
   test("export diagrams without invalid extention files", async () => {
     mkdirp.sync("from/a/b/c");
     mkdirp.sync("from/x/y");
@@ -93,7 +93,7 @@ describe("exportDiagrams", () => {
       "./to/x/2.png",
       "./to/x/y/2.png",
     ]);
-  }, 15 * 1000);
+  }, 60 * 1000);
   test("noop with empty inputDir", async () => {
     mkdirp.sync("from");
     await pumlToImage("from", "to", jarFilePath);
