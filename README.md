@@ -12,7 +12,7 @@ puml を画像へ変換するスクリプト
 
 なので`.npmrc`をプロジェクトルートに配置してください
 
-`${{token}}`はgithub access tokenから作成してください
+`${{token}}`は github の [personal access token](https://github.com/settings/tokens) から作成してください
 
 ### `.npmrc`
 
