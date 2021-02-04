@@ -1,16 +1,16 @@
 import chalk from "chalk";
 import glob from "glob";
 import { exec } from "child_process";
-import { IS_WINDOWS } from "./utils";
+import { IS_WINDOWS } from "./lib/utils";
 import path from "path";
 import util from "util";
 
-const pGlob = util.promisify(glob);
-const pExec = util.promisify(exec);
+const globP = util.promisify(glob);
+const execP = util.promisify(exec);
 
 const EXECUTE_PROCESS_PATH = "./";
 
-export async function exportDiagrams(
+export async function pumlToImage(
   inputDirName: string,
   outputDirName: string,
   jarFilePath: string
@@ -27,7 +27,7 @@ export async function exportDiagrams(
 
   // すべての.pu を全て画像化
   const promises = files.map(
-    pumlToImage(inputDirName, outputDirName, jarFilePath)
+    exportImage(inputDirName, outputDirName, jarFilePath)
   );
 
   try {
@@ -45,10 +45,10 @@ function findAllPuml(rootDir: string) {
   if (rootDir) {
     globPattern = `${rootDir}/${globPattern}`;
   }
-  return pGlob(globPattern);
+  return globP(globPattern);
 }
 
-function pumlToImage(
+function exportImage(
   fromDirName: string,
   toDirName: string,
   jarFilePath: string
@@ -72,8 +72,8 @@ function pumlToImage(
     if (IS_WINDOWS) {
       javaCommand = "chcp 65001 & " + javaCommand;
     }
-    return pExec(javaCommand).then((res) => {
-      console.log(`output of ${file}: ` + res);
+    return execP(javaCommand).then((res) => {
+      console.log(`output of ${file}: ` + JSON.stringify(res));
       return res;
     });
   };

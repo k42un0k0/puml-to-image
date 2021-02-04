@@ -1,16 +1,31 @@
-import { readdirRecursively } from "./utils";
+import { IS_WINDOWS, readdirRecursively } from "./utils";
 import fs from "fs";
 import rimraf from "rimraf";
 import mkdirp from "mkdirp";
+import { exec } from "child_process"
+import * as util from "util"
 
-beforeEach(() => {
-  rimraf.sync(__dirname + "/bintest");
+const execP = util.promisify(exec)
+
+async function clear() {
+  if (IS_WINDOWS) {
+    try {
+      await execP(`rd /s/q ${__dirname + "\\bintest"}`)
+    } catch {
+      // noop
+    }
+  } else {
+    rimraf.sync(__dirname + "/bintest");
+  }
+}
+beforeEach(async () => {
+  await clear();
   mkdirp.sync(__dirname + "/bintest");
   process.chdir(__dirname + "/bintest");
 });
 
-afterAll(() => {
-  rimraf.sync(__dirname + "/bintest");
+afterAll(async () => {
+  await clear();
 });
 
 describe("readdirRecursively", () => {

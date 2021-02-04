@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`cli.js snapshot help 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "$ C:\\\\Users\\\\k42un\\\\Documents\\\\workspace\\\\puml-to-image\\\\node_modules\\\\.bin\\\\ts-node src/cli.ts --help
+puml-to-image [args]
+
+PlantUMLファイルをpng画像へ変換します
+
+オプション:
+      --version        バージョンを表示                                   [真偽]
+  -i, --inputDirName   画像化する対象のディレクトリ名        [デフォルト: \\"doc\\"]
+  -o, --outputDirName  出力するディレクトリ名
+                                [デフォルト: \\"directory_contains_actual_images\\"]
+  -j, --jarFilePath    PlantUMLを画像化するjarファイルのパス        [デフォルト:
+        \\"C:\\\\Users\\\\k42un\\\\Documents\\\\workspace\\\\puml-to-image\\\\src\\\\bin\\\\plantuml.jar\\"]
+      --help           ヘルプを表示                                       [真偽]
+",
+}
+`;

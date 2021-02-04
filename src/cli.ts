@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import path from "path"
 import * as yargs from 'yargs'
-import { exportDiagrams } from "./lib/exportDiagrams"
+import { pumlToImage } from "./pumlToImage"
 
 const inputDirName = "doc";
 const outputDirName = 'directory_contains_actual_images';
@@ -26,9 +26,7 @@ const argv = yargs
         default: jarFilePath
     })
     .help()
-    .epilogue('より詳細な情報は以下のリンクを参照してください\nhttps://github.com/k42un0k0/puml-to-image')
     .argv
 
 
-
-exportDiagrams(argv.inputDirName, argv.outputDirName, argv.jarFilePath);
+pumlToImage(argv.inputDirName, argv.outputDirName, argv.jarFilePath);
