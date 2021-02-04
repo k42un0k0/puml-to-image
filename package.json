@@ -1,6 +1,6 @@
 {
   "name": "@k42un0k0/puml-to-image",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "create png file from *.pu and *.puml",
   "main": "index.js",
   "scripts": {

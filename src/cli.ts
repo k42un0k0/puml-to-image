@@ -9,7 +9,7 @@ const jarFilePath = path.resolve(__dirname, './bin/plantuml.jar')
 
 const argv = yargs
     .scriptName("puml-to-image")
-    .usage('$0 [args]', "PlantUMLファイルをpng画像へ変換します")
+    .usage('$0 [options]', "PlantUMLファイルをpng画像へ変換します")
     .option("inputDirName", {
         alias: "i",
         description: "画像化する対象のディレクトリ名",
