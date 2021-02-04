@@ -41,11 +41,4 @@ describe("cli.js", () => {
             )
         })
     })
-    describe("snapshot", () => {
-        const execP = util.promisify(exec)
-        test("help", async () => {
-            const res = await execP("yarn ts-node src/cli.ts --help")
-            expect(res).toMatchSnapshot()
-        })
-    })
 })

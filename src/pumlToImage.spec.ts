@@ -67,7 +67,7 @@ describe("exportDiagrams", () => {
       "./to/x/y/1.png",
       "./to/x/y/2.png",
     ]);
-  }, 15000);
+  });
   test("export diagrams without invalid extention files", async () => {
     mkdirp.sync("from/a/b/c");
     mkdirp.sync("from/x/y");
