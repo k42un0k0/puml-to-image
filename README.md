@@ -1,4 +1,4 @@
-![Node.js CI](https://github.com/k42un0k0/puml-to-image/workflows/Node.js%20CI/badge.svg?branch=master)
+[![Node.js CI](https://github.com/k42un0k0/puml-to-image/workflows/Node.js%20CI/badge.svg)](https://github.com/k42un0k0/puml-to-image/actions?query=workflow%3A%22Node.js+CI%22)
 
 # puml-to-image
 
