@@ -1,3 +1,5 @@
+![Node.js CI](https://github.com/k42un0k0/puml-to-image/workflows/Node.js%20CI/badge.svg?branch=master)
+
 # puml-to-image
 
 puml を画像へ変換するスクリプト
