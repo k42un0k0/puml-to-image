@@ -1,14 +1,8 @@
 import { mocked } from "ts-jest/utils";
 import { pumlToImage } from "./pumlToImage"
 import path from "path"
-import { exec } from "child_process";
-import * as util from "util";
 
-jest.mock("./pumlToImage", () => {
-    return {
-        pumlToImage: jest.fn()
-    }
-})
+jest.mock("./pumlToImage")
 describe("cli.js", () => {
     test("pass options to pumlToImage", () => {
         jest.isolateModules(() => {
@@ -22,7 +16,6 @@ describe("cli.js", () => {
     })
     test("pass long options to pumlToImage", () => {
         jest.isolateModules(() => {
-            mocked(pumlToImage).mockClear();
             process.argv = ["node", 'cli.js', '--inputDirName', 'input2', '--outputDirName', 'output2', '--jarFilePath', 'jarfile2']
             require("./cli");
             expect(pumlToImage).toBeCalledTimes(1)
