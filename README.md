@@ -45,3 +45,12 @@ puml-to-image [options]
 - `-o`, `--outputDirName`: 出力先のフォルダの名前
 - `-j`, `--jarFilePath`: PlantUML ファイルを画像にする jar ファイルへのパス
   - デフォルトではこのパッケージに同梱された jar ファイルを使用します
+
+# Maintenance
+
+## リリース作業
+1. `npm version hogehoge` でバージョンを挙げる
+2. `v{hogehoge}`タグをつける
+3. タグとmasterブランチをpushする
+4. githubでreleaseを作る
+5. releaseの作成に反応してgithubアクションが動きgprにリリースされる
